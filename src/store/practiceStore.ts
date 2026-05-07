@@ -13,13 +13,15 @@ interface PracticeState {
     isCorrect: boolean;
     answeredAt: Date;
   }>;
+  practiceMode: 'normal' | 'review';
 
-  startPractice: (knowledgePointId: number, questionCount?: number) => void;
+  startPractice: (knowledgePointId: number, questionCount?: number, mode?: 'normal' | 'review') => void;
   selectAnswer: (optionKey: string) => void;
   submitAnswer: () => AnswerFeedback;
   nextQuestion: () => void;
   finishPractice: () => PracticeSession | null;
   resetPractice: () => void;
+  getWrongQuestions: () => number[];
 }
 
 export const usePracticeStore = create<PracticeState>()(
@@ -29,16 +31,26 @@ export const usePracticeStore = create<PracticeState>()(
       currentFeedback: null,
       selectedAnswer: [],
       history: [],
+      practiceMode: 'normal',
 
-      startPractice: (knowledgePointId, questionCount = 10) => {
-        const questions = sampleQuestions
-          .filter(q => q.knowledgePointId === knowledgePointId)
-          .slice(0, questionCount);
+      startPractice: (knowledgePointId, questionCount = 10, mode = 'normal') => {
+        let questions = [];
+        
+        if (mode === 'review') {
+          const wrongQuestionIds = get().getWrongQuestions();
+          questions = sampleQuestions
+            .filter(q => wrongQuestionIds.includes(q.id))
+            .slice(0, questionCount);
+        } else {
+          questions = sampleQuestions
+            .filter(q => q.knowledgePointId === knowledgePointId)
+            .slice(0, questionCount);
+        }
 
         set({
           session: {
             sessionId: `ps_${Date.now()}`,
-            knowledgePointId,
+            knowledgePointId: mode === 'review' ? 0 : knowledgePointId,
             questions,
             currentIndex: 0,
             startTime: new Date(),
@@ -48,7 +60,21 @@ export const usePracticeStore = create<PracticeState>()(
           currentFeedback: null,
           selectedAnswer: [],
           history: [],
+          practiceMode: mode,
         });
+      },
+
+      getWrongQuestions: () => {
+        const wrongIds: number[] = [];
+        Object.keys(localStorage).forEach(key => {
+          if (key.startsWith('question_record_')) {
+            const record = JSON.parse(localStorage.getItem(key) || '{}');
+            if (record.isCorrect === false) {
+              wrongIds.push(record.questionId);
+            }
+          }
+        });
+        return wrongIds;
       },
 
       selectAnswer: (optionKey) => {

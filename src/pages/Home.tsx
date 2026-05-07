@@ -1,9 +1,10 @@
-import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 import { useProgressStore } from '../store/progressStore';
 import ImportExport from '../components/ImportExport';
+import PracticeSelector from '../components/PracticeSelector';
 
 const weeklyData = [
   { day: '周一', questions: 25, mastery: 65 },
@@ -16,7 +17,9 @@ const weeklyData = [
 ];
 
 export default function Home() {
+  const navigate = useNavigate();
   const { progress, initializeProgress, updateStreak, getTodayStats, getDueReviews, getWeakPoints } = useProgressStore();
+  const [showSelector, setShowSelector] = useState(false);
 
   useEffect(() => {
     initializeProgress();
@@ -26,6 +29,17 @@ export default function Home() {
   const todayStats = getTodayStats();
   const dueReviews = getDueReviews();
   const weakPoints = getWeakPoints(3);
+
+  const handleSelectPractice = (knowledgePointId: number) => {
+    setShowSelector(false);
+    setTimeout(() => {
+      if (knowledgePointId === 0) {
+        navigate('/practice/review');
+      } else {
+        navigate(`/practice/${knowledgePointId}`);
+      }
+    }, 50);
+  };
 
   return (
     <div className="space-y-6">
@@ -43,13 +57,13 @@ export default function Home() {
           </p>
         </div>
         <div className="flex space-x-3">
-          <Link
-            to="/practice/112"
+          <button
+            onClick={() => setShowSelector(!showSelector)}
             className="btn-primary flex items-center space-x-2"
           >
-            <span>开始练习</span>
+            <span>选择练习</span>
             <span>→</span>
-          </Link>
+          </button>
         </div>
       </div>
 
@@ -257,6 +271,10 @@ export default function Home() {
             ))}
           </div>
         </motion.div>
+      )}
+
+      {showSelector && (
+        <PracticeSelector onSelect={handleSelectPractice} />
       )}
 
       <motion.div

@@ -26,7 +26,11 @@ export default function Practice() {
 
   useEffect(() => {
     if (pointId) {
-      startPractice(parseInt(pointId), 5);
+      if (pointId === 'review') {
+        startPractice(0, 5, 'review');
+      } else {
+        startPractice(parseInt(pointId), 5);
+      }
     }
     return () => {
       resetPractice();
@@ -47,6 +51,7 @@ export default function Practice() {
   if (session.isCompleted) {
     const correctCount = session.history?.filter(h => h.isCorrect).length || 0;
     const accuracy = Math.round((correctCount / session.questions.length) * 100);
+    const practiceMode = session.knowledgePointId === 0 ? 'review' : 'normal';
 
     return (
       <div className="max-w-2xl mx-auto">
@@ -57,10 +62,12 @@ export default function Practice() {
         >
           <div className="text-6xl mb-4">🎉</div>
           <h1 className="text-3xl font-serif font-bold text-gray-900 mb-2">
-            练习完成！
+            {practiceMode === 'review' ? '错题复习完成！' : '练习完成！'}
           </h1>
           <p className="text-gray-600 mb-6">
-            你已完成本次{getNodePath(session.knowledgePointId)[0]?.name || '专项'}练习
+            {practiceMode === 'review' 
+              ? '你已完成本次错题复习练习' 
+              : `你已完成本次${getNodePath(session.knowledgePointId)[0]?.name || '专项'}练习`}
           </p>
 
           <div className="grid grid-cols-3 gap-4 mb-8">
@@ -86,14 +93,18 @@ export default function Practice() {
 
           <div className="flex justify-center space-x-4">
             <button
-              onClick={() => navigate(`/knowledge/${pointId}`)}
+              onClick={() => navigate('/')}
               className="btn-secondary"
             >
-              返回知识点
+              返回首页
             </button>
             <button
               onClick={() => {
-                startPractice(parseInt(pointId || '0'), 5);
+                if (practiceMode === 'review') {
+                  startPractice(0, 5, 'review');
+                } else {
+                  startPractice(parseInt(pointId || '0'), 5);
+                }
               }}
               className="btn-primary"
             >
@@ -306,7 +317,7 @@ export default function Practice() {
 
       <div className="flex justify-between">
         <button
-          onClick={() => navigate(`/knowledge/${pointId}`)}
+          onClick={() => navigate(pointId === 'review' ? '/' : `/knowledge/${pointId}`)}
           className="btn-secondary flex items-center space-x-2"
         >
           <ArrowLeft className="w-5 h-5" />
