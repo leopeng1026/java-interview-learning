@@ -67,21 +67,21 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="card p-6"
+          className="card p-4 sm:p-5 lg:p-6"
         >
-          <div className="text-4xl mb-2">🎯</div>
-          <div className="text-3xl font-bold text-primary">
+          <div className="text-3xl sm:text-4xl mb-2">🎯</div>
+          <div className="text-2xl sm:text-3xl font-bold text-primary">
             {Math.round(progress.statistics.averageMastery * 100)}%
           </div>
-          <div className="text-gray-500 text-sm">整体掌握度</div>
-          <div className="mt-2 bg-gray-200 rounded-full h-2">
+          <div className="text-gray-500 text-xs sm:text-sm">整体掌握度</div>
+          <div className="mt-2 bg-gray-200 rounded-full h-1.5 sm:h-2">
             <div
-              className="bg-primary h-2 rounded-full transition-all"
+              className="bg-primary h-1.5 sm:h-2 rounded-full transition-all"
               style={{ width: `${progress.statistics.averageMastery * 100}%` }}
             />
           </div>
@@ -91,13 +91,13 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
-          className="card p-6"
+          className="card p-4 sm:p-5 lg:p-6"
         >
-          <div className="text-4xl mb-2">📝</div>
-          <div className="text-3xl font-bold text-accent">
+          <div className="text-3xl sm:text-4xl mb-2">📝</div>
+          <div className="text-2xl sm:text-3xl font-bold text-accent">
             {progress.statistics.totalPracticed}
           </div>
-          <div className="text-gray-500 text-sm">累计答题数</div>
+          <div className="text-gray-500 text-xs sm:text-sm">累计答题数</div>
           <div className="text-xs text-gray-400 mt-1">
             正确 {progress.statistics.totalCorrect} / 错误 {progress.statistics.totalWrong}
           </div>
@@ -107,13 +107,13 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="card p-6"
+          className="card p-4 sm:p-5 lg:p-6"
         >
-          <div className="text-4xl mb-2">📚</div>
-          <div className="text-3xl font-bold text-green-500">
+          <div className="text-3xl sm:text-4xl mb-2">📚</div>
+          <div className="text-2xl sm:text-3xl font-bold text-green-500">
             {Object.values(progress.knowledgePoints).filter(kp => kp.totalAnswered > 0).length}
           </div>
-          <div className="text-gray-500 text-sm">已练习知识点</div>
+          <div className="text-gray-500 text-xs sm:text-sm">已练习知识点</div>
           <div className="text-xs text-gray-400 mt-1">
             共 {Object.keys(progress.knowledgePoints).length} 个知识点
           </div>
@@ -123,40 +123,40 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
-          className="card p-6"
+          className="card p-4 sm:p-5 lg:p-6"
         >
-          <div className="text-4xl mb-2">🔥</div>
-          <div className="text-3xl font-bold text-orange-500">
+          <div className="text-3xl sm:text-4xl mb-2">🔥</div>
+          <div className="text-2xl sm:text-3xl font-bold text-orange-500">
             {progress.statistics.currentStreak}
           </div>
-          <div className="text-gray-500 text-sm">连续学习天数</div>
+          <div className="text-gray-500 text-xs sm:text-sm">连续学习天数</div>
           <div className="text-xs text-gray-400 mt-1">
             历史最长：{progress.statistics.longestStreak} 天
           </div>
         </motion.div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="card p-6 lg:col-span-2"
+          className="card p-4 sm:p-6 lg:col-span-2"
         >
-          <h2 className="text-lg font-serif font-semibold mb-4">本周学习趋势</h2>
-          <div className="h-64">
+          <h2 className="text-base sm:text-lg font-serif font-semibold mb-3 sm:mb-4">本周学习趋势</h2>
+          <div className="h-48 sm:h-56 lg:h-64">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={weeklyData}>
-                <XAxis dataKey="day" stroke="#7f8c8d" />
-                <YAxis yAxisId="left" stroke="#1e3a5f" />
-                <YAxis yAxisId="right" orientation="right" stroke="#f5a623" />
+                <XAxis dataKey="day" stroke="#7f8c8d" tick={{ fontSize: 10 }} />
+                <YAxis yAxisId="left" stroke="#1e3a5f" tick={{ fontSize: 10 }} />
+                <YAxis yAxisId="right" orientation="right" stroke="#f5a623" tick={{ fontSize: 10 }} />
                 <Line
                   yAxisId="left"
                   type="monotone"
                   dataKey="questions"
                   stroke="#1e3a5f"
                   strokeWidth={2}
-                  dot={{ fill: '#1e3a5f' }}
+                  dot={{ fill: '#1e3a5f', r: 4 }}
                 />
                 <Line
                   yAxisId="right"
@@ -164,7 +164,7 @@ export default function Home() {
                   dataKey="mastery"
                   stroke="#f5a623"
                   strokeWidth={2}
-                  dot={{ fill: '#f5a623' }}
+                  dot={{ fill: '#f5a623', r: 4 }}
                 />
               </LineChart>
             </ResponsiveContainer>

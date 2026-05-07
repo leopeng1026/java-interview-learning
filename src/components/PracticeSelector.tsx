@@ -49,25 +49,25 @@ export default function PracticeSelector({ onSelect }: PracticeSelectorProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3 }}
-      className="card p-6"
+      className="card p-4 sm:p-6"
     >
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-serif font-semibold flex items-center space-x-2">
-          <Target className="w-5 h-5 text-primary" />
+      <div className="flex items-center justify-between mb-4 sm:mb-6">
+        <h2 className="text-base sm:text-lg font-serif font-semibold flex items-center space-x-2">
+          <Target className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
           <span>选择练习内容</span>
         </h2>
       </div>
 
-      <div className="mb-6">
-        <h3 className="text-sm font-medium text-gray-600 mb-3">练习模式</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="mb-4 sm:mb-6">
+        <h3 className="text-xs sm:text-sm font-medium text-gray-600 mb-2 sm:mb-3">练习模式</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
           {modeOptions.map((mode) => {
             const Icon = mode.icon;
             return (
               <button
                 key={mode.value}
                 onClick={() => setPracticeMode(mode.value)}
-                className={`p-4 rounded-xl border-2 transition-all text-left ${
+                className={`p-3 sm:p-4 rounded-xl border-2 transition-all text-left ${
                   practiceMode === mode.value
                     ? 'border-primary bg-primary/5'
                     : 'border-gray-200 hover:border-gray-300'
@@ -75,7 +75,7 @@ export default function PracticeSelector({ onSelect }: PracticeSelectorProps) {
               >
                 <div className="flex items-center space-x-2 mb-1">
                   <Icon className={`w-4 h-4 ${practiceMode === mode.value ? 'text-primary' : 'text-gray-400'}`} />
-                  <span className={`font-medium text-sm ${practiceMode === mode.value ? 'text-primary' : 'text-gray-700'}`}>
+                  <span className={`font-medium text-xs sm:text-sm ${practiceMode === mode.value ? 'text-primary' : 'text-gray-700'}`}>
                     {mode.label}
                   </span>
                 </div>
@@ -87,8 +87,8 @@ export default function PracticeSelector({ onSelect }: PracticeSelectorProps) {
       </div>
 
       <div>
-        <h3 className="text-sm font-medium text-gray-600 mb-3">知识点选择</h3>
-        <div className="space-y-2 max-h-80 overflow-y-auto pr-2">
+        <h3 className="text-xs sm:text-sm font-medium text-gray-600 mb-2 sm:mb-3">知识点选择</h3>
+        <div className="space-y-2 max-h-64 sm:max-h-80 overflow-y-auto pr-2">
           {initialKnowledgeTree.map((library) => (
             <div key={library.id} className="border border-gray-200 rounded-lg overflow-hidden">
               <button
