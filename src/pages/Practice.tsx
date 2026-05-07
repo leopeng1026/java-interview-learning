@@ -132,7 +132,7 @@ export default function Practice() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto pb-32 sm:pb-24">
+    <div className="max-w-3xl mx-auto pb-40 sm:pb-24">
       <div className="card p-3 sm:p-6 mb-4 sm:mb-6">
         <div className="flex justify-between items-center mb-3 sm:mb-4">
           <div>
@@ -315,7 +315,7 @@ export default function Practice() {
         )}
       </AnimatePresence>
 
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 sm:p-4 z-40">
+      <div className="fixed left-0 right-0 bg-white border-t border-gray-200 p-3 sm:p-4 z-[100] bottom-[56px] md:bottom-0">
         <div className="max-w-3xl mx-auto flex justify-between gap-3">
           <button
             onClick={() => navigate(pointId === 'review' ? '/' : `/knowledge/${pointId}`)}

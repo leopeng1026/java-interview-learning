@@ -24,4 +24,8 @@
   .knowledge-node {
     @apply border-l-4 border-primary pl-4 py-3 hover:bg-gray-50 transition-colors;
   }
+
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
 }
