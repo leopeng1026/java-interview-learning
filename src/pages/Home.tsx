@@ -1,6 +1,9 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from 'recharts';
+import { useProgressStore } from '../store/progressStore';
+import ImportExport from '../components/ImportExport';
 
 const weeklyData = [
   { day: '周一', questions: 25, mastery: 65 },
@@ -12,23 +15,17 @@ const weeklyData = [
   { day: '周日', questions: 30, mastery: 80 },
 ];
 
-const weakPoints = [
-  { id: 113, name: 'ConcurrentHashMap', mastery: 0.45, questions: 15 },
-  { id: 132, name: 'volatile与内存屏障', mastery: 0.48, questions: 12 },
-  { id: 134, name: 'AQS与ReentrantLock', mastery: 0.35, questions: 5 },
-  { id: 122, name: '垃圾回收', mastery: 0.50, questions: 25 },
-];
-
-const todayTasks = [
-  { type: 'review', title: 'HashMap待复习', count: 8, icon: '🔄' },
-  { type: 'weak', title: '薄弱点强化', count: 5, icon: '💪' },
-  { type: 'new', title: '新知识点', count: 3, icon: '📖' },
-];
-
 export default function Home() {
-  const totalMastery = 68;
-  const totalQuestions = 235;
-  const streak = 7;
+  const { progress, initializeProgress, updateStreak, getTodayStats, getDueReviews, getWeakPoints } = useProgressStore();
+
+  useEffect(() => {
+    initializeProgress();
+    updateStreak();
+  }, [initializeProgress, updateStreak]);
+
+  const todayStats = getTodayStats();
+  const dueReviews = getDueReviews();
+  const weakPoints = getWeakPoints(3);
 
   return (
     <div className="space-y-6">
@@ -38,7 +35,11 @@ export default function Home() {
             学习仪表盘
           </h1>
           <p className="text-gray-500 mt-1">
-            持续学习，深度巩固 - 第{streak}天连续学习 🔥
+            {progress.statistics.currentStreak > 0 ? (
+              <>持续学习，深度巩固 - 第{progress.statistics.currentStreak}天连续学习 🔥</>
+            ) : (
+              <>开始你的学习之旅吧！</>
+            )}
           </p>
         </div>
         <div className="flex space-x-3">
@@ -52,7 +53,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -60,12 +61,14 @@ export default function Home() {
           className="card p-6"
         >
           <div className="text-4xl mb-2">🎯</div>
-          <div className="text-3xl font-bold text-primary">{totalMastery}%</div>
+          <div className="text-3xl font-bold text-primary">
+            {Math.round(progress.statistics.averageMastery * 100)}%
+          </div>
           <div className="text-gray-500 text-sm">整体掌握度</div>
           <div className="mt-2 bg-gray-200 rounded-full h-2">
             <div
               className="bg-primary h-2 rounded-full transition-all"
-              style={{ width: `${totalMastery}%` }}
+              style={{ width: `${progress.statistics.averageMastery * 100}%` }}
             />
           </div>
         </motion.div>
@@ -77,8 +80,13 @@ export default function Home() {
           className="card p-6"
         >
           <div className="text-4xl mb-2">📝</div>
-          <div className="text-3xl font-bold text-accent">{totalQuestions}</div>
+          <div className="text-3xl font-bold text-accent">
+            {progress.statistics.totalPracticed}
+          </div>
           <div className="text-gray-500 text-sm">累计答题数</div>
+          <div className="text-xs text-gray-400 mt-1">
+            正确 {progress.statistics.totalCorrect} / 错误 {progress.statistics.totalWrong}
+          </div>
         </motion.div>
 
         <motion.div
@@ -88,8 +96,13 @@ export default function Home() {
           className="card p-6"
         >
           <div className="text-4xl mb-2">📚</div>
-          <div className="text-3xl font-bold text-green-500">12</div>
-          <div className="text-gray-500 text-sm">已掌握知识点</div>
+          <div className="text-3xl font-bold text-green-500">
+            {Object.values(progress.knowledgePoints).filter(kp => kp.totalAnswered > 0).length}
+          </div>
+          <div className="text-gray-500 text-sm">已练习知识点</div>
+          <div className="text-xs text-gray-400 mt-1">
+            共 {Object.keys(progress.knowledgePoints).length} 个知识点
+          </div>
         </motion.div>
 
         <motion.div
@@ -99,8 +112,13 @@ export default function Home() {
           className="card p-6"
         >
           <div className="text-4xl mb-2">🔥</div>
-          <div className="text-3xl font-bold text-orange-500">{streak}</div>
+          <div className="text-3xl font-bold text-orange-500">
+            {progress.statistics.currentStreak}
+          </div>
           <div className="text-gray-500 text-sm">连续学习天数</div>
+          <div className="text-xs text-gray-400 mt-1">
+            历史最长：{progress.statistics.longestStreak} 天
+          </div>
         </motion.div>
       </div>
 
@@ -157,67 +175,96 @@ export default function Home() {
         >
           <h2 className="text-lg font-serif font-semibold mb-4">今日任务</h2>
           <div className="space-y-3">
-            {todayTasks.map((task) => (
-              <div
-                key={task.type}
-                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-              >
-                <div className="flex items-center space-x-3">
-                  <span className="text-2xl">{task.icon}</span>
-                  <span className="text-sm font-medium text-gray-700">
-                    {task.title}
-                  </span>
-                </div>
-                <span className="bg-white px-3 py-1 rounded-full text-sm font-medium text-primary">
-                  {task.count}题
+            <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+              <div className="flex items-center space-x-3">
+                <span className="text-2xl">📖</span>
+                <span className="text-sm font-medium text-gray-700">
+                  今日答题
                 </span>
+              </div>
+              <span className="bg-white px-3 py-1 rounded-full text-sm font-medium text-primary">
+                {todayStats.practiced}题
+              </span>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+              <div className="flex items-center space-x-3">
+                <span className="text-2xl">✓</span>
+                <span className="text-sm font-medium text-gray-700">
+                  正确率
+                </span>
+              </div>
+              <span className="bg-white px-3 py-1 rounded-full text-sm font-medium text-green-600">
+                {todayStats.accuracy}%
+              </span>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
+              <div className="flex items-center space-x-3">
+                <span className="text-2xl">🔄</span>
+                <span className="text-sm font-medium text-gray-700">
+                  待复习
+                </span>
+              </div>
+              <span className="bg-white px-3 py-1 rounded-full text-sm font-medium text-orange-600">
+                {dueReviews.length}题
+              </span>
+            </div>
+          </div>
+          {dueReviews.length > 0 && (
+            <Link
+              to="/practice/112"
+              className="w-full mt-4 btn-primary text-center block text-sm"
+            >
+              开始复习
+            </Link>
+          )}
+        </motion.div>
+      </div>
+
+      {weakPoints.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="card p-6"
+        >
+          <h2 className="text-lg font-serif font-semibold mb-4">
+            ⚠️ 需要加强的知识点
+          </h2>
+          <div className="space-y-3">
+            {weakPoints.map((point) => (
+              <div
+                key={point.knowledgePointId}
+                className="flex items-center justify-between p-4 bg-orange-50 rounded-lg"
+              >
+                <div>
+                  <div className="font-medium text-gray-800">{point.name}</div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="text-right">
+                    <div className="text-lg font-bold text-orange-500">
+                      {Math.round(point.mastery * 100)}%
+                    </div>
+                    <div className="text-xs text-gray-500">掌握度</div>
+                  </div>
+                  <Link
+                    to={`/practice/${point.knowledgePointId}`}
+                    className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm"
+                  >
+                    去练习
+                  </Link>
+                </div>
               </div>
             ))}
           </div>
-          <button className="w-full mt-4 btn-secondary text-sm">
-            查看全部任务 →
-          </button>
         </motion.div>
-      </div>
+      )}
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-        className="card p-6"
+        transition={{ delay: 0.45 }}
       >
-        <h2 className="text-lg font-serif font-semibold mb-4">
-          ⚠️ 需要加强的知识点
-        </h2>
-        <div className="space-y-3">
-          {weakPoints.map((point) => (
-            <div
-              key={point.id}
-              className="flex items-center justify-between p-4 bg-orange-50 rounded-lg"
-            >
-              <div>
-                <div className="font-medium text-gray-800">{point.name}</div>
-                <div className="text-sm text-gray-500">
-                  {point.questions}道相关题目
-                </div>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="text-right">
-                  <div className="text-lg font-bold text-orange-500">
-                    {Math.round(point.mastery * 100)}%
-                  </div>
-                  <div className="text-xs text-gray-500">掌握度</div>
-                </div>
-                <Link
-                  to={`/practice/${point.id}`}
-                  className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm"
-                >
-                  去练习
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
+        <ImportExport />
       </motion.div>
     </div>
   );

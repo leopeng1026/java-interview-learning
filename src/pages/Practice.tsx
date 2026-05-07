@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, XCircle, ArrowRight, ArrowLeft } from 'lucide-react';
 import { usePracticeStore } from '../store/practiceStore';
 import { useKnowledgeStore } from '../store/knowledgeStore';
+import { useProgressStore } from '../store/progressStore';
 import { SM2Algorithm } from '../utils/sm2';
 
 export default function Practice() {
@@ -21,6 +22,7 @@ export default function Practice() {
     resetPractice,
   } = usePracticeStore();
   const { getNodePath } = useKnowledgeStore();
+  const { recordAnswer } = useProgressStore();
 
   useEffect(() => {
     if (pointId) {
@@ -43,6 +45,9 @@ export default function Practice() {
   }
 
   if (session.isCompleted) {
+    const correctCount = session.history?.filter(h => h.isCorrect).length || 0;
+    const accuracy = Math.round((correctCount / session.questions.length) * 100);
+
     return (
       <div className="max-w-2xl mx-auto">
         <motion.div
@@ -61,7 +66,7 @@ export default function Practice() {
           <div className="grid grid-cols-3 gap-4 mb-8">
             <div className="bg-green-50 rounded-lg p-4">
               <div className="text-2xl font-bold text-green-600">
-                {session.history?.filter(() => true).length || 0}
+                {correctCount}
               </div>
               <div className="text-sm text-gray-600">正确数</div>
             </div>
@@ -73,11 +78,7 @@ export default function Practice() {
             </div>
             <div className="bg-blue-50 rounded-lg p-4">
               <div className="text-2xl font-bold text-blue-600">
-                {Math.round(
-                  ((session.history?.filter(h => h.isCorrect).length || 0) /
-                    session.questions.length) *
-                    100
-                )}%
+                {accuracy}%
               </div>
               <div className="text-sm text-gray-600">正确率</div>
             </div>
@@ -106,6 +107,18 @@ export default function Practice() {
 
   const currentQuestion = session.questions[session.currentIndex];
   const progress = ((session.currentIndex + 1) / session.questions.length) * 100;
+
+  const handleSubmitAnswer = () => {
+    const feedback = submitAnswer();
+
+    recordAnswer({
+      questionId: currentQuestion.id,
+      knowledgePointId: currentQuestion.knowledgePointId,
+      isCorrect: feedback.isCorrect,
+      userAnswer: feedback.yourAnswer,
+      correctAnswer: feedback.correctAnswer,
+    });
+  };
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -302,7 +315,7 @@ export default function Practice() {
 
         {!currentFeedback ? (
           <button
-            onClick={submitAnswer}
+            onClick={handleSubmitAnswer}
             disabled={selectedAnswer.length === 0}
             className="btn-primary flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
