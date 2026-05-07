@@ -29,7 +29,6 @@ function App() {
           <Route path="knowledge/:id" element={<KnowledgeDetail />} />
           <Route path="practice/:pointId" element={<Practice />} />
           <Route path="practice/:pointId/result" element={<PracticeResult />} />
-          <Route path="practice/review" element={<Practice />} />
           <Route path="mistakes" element={<Mistakes />} />
           <Route path="statistics" element={<Statistics />} />
         </Route>

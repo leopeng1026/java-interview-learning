@@ -1,61 +1,107 @@
+import { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Home, BookOpen, FileText, BarChart3, Menu, X } from 'lucide-react';
 
 const navigation = [
-  { name: '首页', href: '/', icon: '🏠' },
-  { name: '知识树', href: '/knowledge', icon: '📚' },
-  { name: '错题本', href: '/mistakes', icon: '📝' },
-  { name: '学习统计', href: '/statistics', icon: '📊' },
+  { name: '首页', href: '/', icon: Home },
+  { name: '知识树', href: '/knowledge', icon: BookOpen },
+  { name: '错题本', href: '/mistakes', icon: FileText },
+  { name: '学习统计', href: '/statistics', icon: BarChart3 },
 ];
 
 export default function Layout() {
   const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
+    <div className="min-h-screen bg-gray-50 pb-20 lg:pb-8">
+      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-14 sm:h-16">
-            <div className="flex items-center space-x-3 sm:space-x-8">
-              <Link to="/" className="flex items-center space-x-2">
-                <span className="text-xl sm:text-2xl">⚡</span>
-                <h1 className="text-lg sm:text-xl font-serif font-bold text-primary">
-                  代码修炼阁
-                </h1>
-              </Link>
-              <nav className="hidden md:flex space-x-2 sm:space-x-4">
+            <Link to="/" className="flex items-center space-x-2">
+              <span className="text-xl sm:text-2xl">⚡</span>
+              <h1 className="text-lg sm:text-xl font-serif font-bold text-primary">
+                代码修炼阁
+              </h1>
+            </Link>
+
+            <div className="flex items-center space-x-2">
+              <div className="hidden sm:flex items-center space-x-2">
+                <div className="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm font-medium">
+                  学
+                </div>
+                <span className="text-sm text-gray-600">学习中</span>
+              </div>
+
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                {mobileMenuOpen ? (
+                  <X className="w-6 h-6 text-gray-600" />
+                ) : (
+                  <Menu className="w-6 h-6 text-gray-600" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          <nav className="hidden lg:flex space-x-2 pb-2">
+            {navigation.map((item) => {
+              const isActive = location.pathname === item.href;
+              return (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={`flex items-center space-x-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    isActive
+                      ? 'bg-primary text-white'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  <item.icon className="w-4 h-4" />
+                  <span>{item.name}</span>
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="lg:hidden border-t border-gray-200"
+            >
+              <div className="px-4 py-3 space-y-1">
                 {navigation.map((item) => {
                   const isActive = location.pathname === item.href;
                   return (
                     <Link
                       key={item.name}
                       to={item.href}
-                      className={`flex items-center space-x-1 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center space-x-3 px-3 py-3 rounded-lg text-base font-medium transition-colors ${
                         isActive
                           ? 'bg-primary text-white'
                           : 'text-gray-600 hover:bg-gray-100'
                       }`}
                     >
-                      <span>{item.icon}</span>
+                      <item.icon className="w-5 h-5" />
                       <span>{item.name}</span>
                     </Link>
                   );
                 })}
-              </nav>
-            </div>
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <div className="flex items-center space-x-2">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-accent text-white flex items-center justify-center text-xs sm:text-sm font-medium">
-                  学
-                </div>
-                <span className="text-xs sm:text-sm text-gray-600 hidden sm:block">学习中</span>
               </div>
-            </div>
-          </div>
-        </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
-      <main className="flex-1 max-w-7xl mx-auto w-full px-3 sm:px-4 lg:px-8 py-6 sm:py-8">
+      <main className="max-w-7xl mx-auto px-3 sm:px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         <motion.div
           key={location.pathname}
           initial={{ opacity: 0, y: 10 }}
@@ -66,27 +112,25 @@ export default function Layout() {
         </motion.div>
       </main>
 
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
-        <div className="flex justify-around items-center h-14">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
+        <div className="grid grid-cols-4 h-16">
           {navigation.map((item) => {
             const isActive = location.pathname === item.href;
             return (
               <Link
                 key={item.name}
                 to={item.href}
-                className={`flex flex-col items-center space-y-0.5 px-3 py-1 transition-colors ${
+                className={`flex flex-col items-center justify-center space-y-1 transition-colors ${
                   isActive ? 'text-primary' : 'text-gray-400'
                 }`}
               >
-                <span className="text-lg">{item.icon}</span>
+                <item.icon className={`w-5 h-5 ${isActive ? 'w-6 h-6' : ''}`} />
                 <span className="text-xs font-medium">{item.name}</span>
               </Link>
             );
           })}
         </div>
       </nav>
-
-      <div className="md:hidden h-16"></div>
     </div>
   );
 }
