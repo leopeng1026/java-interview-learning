@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home, BookOpen, FileText, BarChart3, Menu, X } from 'lucide-react';
+import { Home, BookOpen, FileText, BarChart3, Menu, X, Database } from 'lucide-react';
 
 const navigation = [
   { name: '首页', href: '/', icon: Home },
   { name: '知识树', href: '/knowledge', icon: BookOpen },
+  { name: '题库管理', href: '/question-bank', icon: Database },
   { name: '错题本', href: '/mistakes', icon: FileText },
   { name: '学习统计', href: '/statistics', icon: BarChart3 },
 ];
@@ -113,8 +114,8 @@ export default function Layout() {
       </main>
 
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
-        <div className="grid grid-cols-4 h-16">
-          {navigation.map((item) => {
+        <div className="grid grid-cols-5 h-16">
+          {navigation.slice(0, 5).map((item) => {
             const isActive = location.pathname === item.href;
             return (
               <Link

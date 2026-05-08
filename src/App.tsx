@@ -8,6 +8,7 @@ import Practice from './pages/Practice';
 import PracticeResult from './pages/PracticeResult';
 import Mistakes from './pages/Mistakes';
 import Statistics from './pages/Statistics';
+import QuestionBank from './pages/QuestionBank';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route path="practice/:pointId/result" element={<PracticeResult />} />
           <Route path="mistakes" element={<Mistakes />} />
           <Route path="statistics" element={<Statistics />} />
+          <Route path="question-bank" element={<QuestionBank />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
