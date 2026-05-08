@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ChevronDown, BookOpen, Folder, Tag } from 'lucide-react';
@@ -24,9 +24,30 @@ interface TreeNodeProps {
 
 function TreeNode({ node, level }: TreeNodeProps) {
   const { expandedNodes, toggleNode, selectNode, selectedNode } = useKnowledgeStore();
+  const [clickCount, setClickCount] = useState(0);
+  const [lastClickTime, setLastClickTime] = useState(0);
   const isExpanded = expandedNodes.has(node.id);
   const isSelected = selectedNode?.id === node.id;
   const hasChildren = node.children && node.children.length > 0;
+
+  const handleClick = () => {
+    toggleNode(node.id);
+    selectNode(node);
+    
+    const now = Date.now();
+    if (now - lastClickTime < 300) {
+      setClickCount(prev => prev + 1);
+    } else {
+      setClickCount(1);
+    }
+    setLastClickTime(now);
+  };
+
+  useEffect(() => {
+    if (clickCount >= 2 && node.type === 'point') {
+      window.location.href = `/practice/${node.id}`;
+    }
+  }, [clickCount, node]);
 
   return (
     <div className="select-none">
@@ -34,51 +55,48 @@ function TreeNode({ node, level }: TreeNodeProps) {
         initial={{ opacity: 0, x: -10 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: level * 0.05 }}
-        className={`flex items-center justify-between p-3 hover:bg-gray-50 cursor-pointer transition-colors rounded-lg ${
-          isSelected ? 'bg-blue-50 border-l-4 border-blue-500' : ''
-        }`}
-        style={{ paddingLeft: `${level * 20 + 12}px` }}
-        onClick={() => {
-          toggleNode(node.id);
-          selectNode(node);
-        }}
+        className={`flex items-center justify-between p-2 sm:p-3 hover:bg-gray-50 cursor-pointer transition-colors rounded-lg ${
+          isSelected ? 'bg-blue-50 border-l-3 border-blue-500 sm:border-l-4' : ''
+        } ${clickCount >= 1 && node.type === 'point' ? 'bg-blue-50/50' : ''}`}
+        style={{ paddingLeft: `${level * 12 + 8}px` }}
+        onClick={handleClick}
       >
-        <div className="flex items-center space-x-3 flex-1">
+        <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
           {hasChildren ? (
             isExpanded ? (
-              <ChevronDown className="w-4 h-4 text-gray-400" />
+              <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 shrink-0" />
             ) : (
-              <ChevronRight className="w-4 h-4 text-gray-400" />
+              <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 shrink-0" />
             )
           ) : (
-            <div className="w-4" />
+            <div className="w-3 sm:w-4" />
           )}
           <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-white"
+            className="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg flex items-center justify-center text-white shrink-0"
             style={{ backgroundColor: node.color || '#1e3a5f' }}
           >
             {typeIcons[node.type]}
           </div>
-          <div className="flex-1">
-            <div className="font-medium text-gray-800">{node.name}</div>
-            <div className="text-xs text-gray-500">
-              {typeLabels[node.type]}
-              {node.questionCount !== undefined && ` · ${node.questionCount}题`}
+          <div className="flex-1 min-w-0">
+            <div className="font-medium text-gray-800 text-sm sm:text-base truncate">{node.name}</div>
+            <div className="text-xs text-gray-500 flex items-center gap-1">
+              <span>{typeLabels[node.type]}</span>
+              {node.questionCount !== undefined && <span>· {node.questionCount}题</span>}
             </div>
           </div>
         </div>
         {node.masteryRate !== undefined && (
-          <div className="flex items-center space-x-2 mr-4">
-            <div className="w-24 bg-gray-200 rounded-full h-2">
+          <div className="flex items-center space-x-1 sm:space-x-2 ml-2 shrink-0">
+            <div className="hidden sm:block w-16 bg-gray-200 rounded-full h-1.5">
               <div
-                className="h-2 rounded-full transition-all"
+                className="h-1.5 rounded-full transition-all"
                 style={{
                   width: `${node.masteryRate * 100}%`,
                   backgroundColor: node.color || '#1e3a5f',
                 }}
               />
             </div>
-            <span className="text-sm font-medium text-gray-600">
+            <span className="text-xs sm:text-sm font-medium text-gray-600 w-8 text-right">
               {Math.round(node.masteryRate * 100)}%
             </span>
           </div>
@@ -129,20 +147,20 @@ export default function KnowledgeTree() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start items-start gap-4">
         <div>
-          <h1 className="text-3xl font-serif font-bold text-gray-900">
+          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-gray-900">
             知识树
           </h1>
-          <p className="text-gray-500 mt-1">
+          <p className="text-gray-500 mt-1 text-sm">
             探索Java面试知识体系 · 共{totalQuestions}道题目
           </p>
         </div>
-        <div className="flex space-x-2">
-          <button onClick={expandAll} className="btn-secondary text-sm">
+        <div className="flex space-x-2 sm:mt-2">
+          <button onClick={expandAll} className="btn-secondary text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2">
             展开全部
           </button>
-          <button onClick={collapseAll} className="btn-secondary text-sm">
+          <button onClick={collapseAll} className="btn-secondary text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2">
             收起全部
           </button>
         </div>

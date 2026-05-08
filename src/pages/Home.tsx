@@ -52,25 +52,25 @@ export default function Home() {
         </Link>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="card p-4 sm:p-6"
+          className="card p-3 sm:p-4"
         >
-          <div className="flex items-center space-x-3 mb-2">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary bg-opacity-10 flex items-center justify-center">
-              <Target className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+          <div className="flex items-center space-x-2 sm:space-x-3 mb-1 sm:mb-2">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-primary bg-opacity-10 flex items-center justify-center">
+              <Target className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
             </div>
-            <div className="text-2xl sm:text-3xl font-bold text-primary">
+            <div className="text-xl sm:text-2xl font-bold text-primary">
               {Math.round(progress.statistics.averageMastery * 100)}%
             </div>
           </div>
           <div className="text-gray-500 text-xs sm:text-sm">整体掌握度</div>
-          <div className="mt-2 bg-gray-200 rounded-full h-1.5 sm:h-2">
+          <div className="mt-2 bg-gray-200 rounded-full h-1 sm:h-1.5">
             <div
-              className="bg-primary h-1.5 sm:h-2 rounded-full transition-all"
+              className="bg-primary h-1 sm:h-1.5 rounded-full transition-all"
               style={{ width: `${progress.statistics.averageMastery * 100}%` }}
             />
           </div>
@@ -80,13 +80,13 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
-          className="card p-4 sm:p-6"
+          className="card p-3 sm:p-4"
         >
-          <div className="flex items-center space-x-3 mb-2">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-accent bg-opacity-10 flex items-center justify-center">
-              <FileQuestion className="w-5 h-5 sm:w-6 sm:h-6 text-accent" />
+          <div className="flex items-center space-x-2 sm:space-x-3 mb-1 sm:mb-2">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-accent bg-opacity-10 flex items-center justify-center">
+              <FileQuestion className="w-4 h-4 sm:w-5 sm:h-5 text-accent" />
             </div>
-            <div className="text-2xl sm:text-3xl font-bold text-accent">
+            <div className="text-xl sm:text-2xl font-bold text-accent">
               {progress.statistics.totalPracticed}
             </div>
           </div>
@@ -100,13 +100,13 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="card p-4 sm:p-6"
+          className="card p-3 sm:p-4"
         >
-          <div className="flex items-center space-x-3 mb-2">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-green-500 bg-opacity-10 flex items-center justify-center">
-              <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-green-500" />
+          <div className="flex items-center space-x-2 sm:space-x-3 mb-1 sm:mb-2">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-green-500 bg-opacity-10 flex items-center justify-center">
+              <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" />
             </div>
-            <div className="text-2xl sm:text-3xl font-bold text-green-500">
+            <div className="text-xl sm:text-2xl font-bold text-green-500">
               {Object.values(progress.knowledgePoints).filter(kp => kp.totalAnswered > 0).length}
             </div>
           </div>
@@ -120,13 +120,13 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
-          className="card p-4 sm:p-6 col-span-2 sm:col-span-1"
+          className="card p-3 sm:p-4"
         >
-          <div className="flex items-center space-x-3 mb-2">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-orange-500 bg-opacity-10 flex items-center justify-center">
-              <Flame className="w-5 h-5 sm:w-6 sm:h-6 text-orange-500" />
+          <div className="flex items-center space-x-2 sm:space-x-3 mb-1 sm:mb-2">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-orange-500 bg-opacity-10 flex items-center justify-center">
+              <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" />
             </div>
-            <div className="text-2xl sm:text-3xl font-bold text-orange-500">
+            <div className="text-xl sm:text-2xl font-bold text-orange-500">
               {progress.statistics.currentStreak}
             </div>
           </div>

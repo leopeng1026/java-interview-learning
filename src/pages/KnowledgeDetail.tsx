@@ -42,106 +42,102 @@ export default function KnowledgeDetail() {
         ))}
       </div>
 
-      <div className="card p-8">
-        <div className="flex justify-between items-start mb-6">
+      <div className="card p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start items-start gap-4">
           <div>
-            <h1 className="text-3xl font-serif font-bold text-gray-900">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-serif font-bold text-gray-900">
               {currentNode.name}
             </h1>
             {currentNode.description && (
-              <p className="text-gray-600 mt-2">{currentNode.description}</p>
+              <p className="text-gray-600 mt-2 text-sm sm:text-base">{currentNode.description}</p>
             )}
           </div>
           {currentNode.type === 'point' && (
             <Link
               to={`/practice/${currentNode.id}`}
-              className="btn-primary text-lg px-8 py-3"
+              className="btn-primary text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-2.5 w-full sm:w-auto text-center"
             >
               开始练习
             </Link>
           )}
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-green-50 rounded-lg p-4 text-center">
-            <div className="text-3xl font-bold text-green-600">
+        <div className="grid grid-cols-4 gap-2 sm:gap-3 mt-4 sm:mt-6">
+          <div className="bg-green-50 rounded-lg p-2 sm:p-4 text-center">
+            <div className="text-xl sm:text-2xl md:text-3xl font-bold text-green-600">
               {difficultyStats.easy}
             </div>
-            <div className="text-sm text-gray-600">简单</div>
+            <div className="text-xs sm:text-sm text-gray-600">简单</div>
           </div>
-          <div className="bg-blue-50 rounded-lg p-4 text-center">
-            <div className="text-3xl font-bold text-blue-600">
+          <div className="bg-blue-50 rounded-lg p-2 sm:p-4 text-center">
+            <div className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-600">
               {difficultyStats.medium}
             </div>
-            <div className="text-sm text-gray-600">中等</div>
+            <div className="text-xs sm:text-sm text-gray-600">中等</div>
           </div>
-          <div className="bg-orange-50 rounded-lg p-4 text-center">
-            <div className="text-3xl font-bold text-orange-600">
+          <div className="bg-orange-50 rounded-lg p-2 sm:p-4 text-center">
+            <div className="text-xl sm:text-2xl md:text-3xl font-bold text-orange-600">
               {difficultyStats.hard}
             </div>
-            <div className="text-sm text-gray-600">困难</div>
+            <div className="text-xs sm:text-sm text-gray-600">困难</div>
           </div>
-          <div className="bg-red-50 rounded-lg p-4 text-center">
-            <div className="text-3xl font-bold text-red-600">
+          <div className="bg-red-50 rounded-lg p-2 sm:p-4 text-center">
+            <div className="text-xl sm:text-2xl md:text-3xl font-bold text-red-600">
               {difficultyStats.expert}
             </div>
-            <div className="text-sm text-gray-600">专家</div>
+            <div className="text-xs sm:text-sm text-gray-600">专家</div>
           </div>
         </div>
       </div>
 
-      <div className="card p-6">
-        <h2 className="text-xl font-serif font-semibold mb-4">
+      <div className="card p-4 sm:p-6">
+        <h2 className="text-base sm:text-lg md:text-xl font-serif font-semibold mb-3 sm:mb-4">
           相关题目列表 ({questions.length})
         </h2>
-        <div className="space-y-3">
+        <div className="space-y-2 sm:space-y-3">
           {questions.map((question) => (
             <div
               key={question.id}
-              className="p-4 border border-gray-200 rounded-lg hover:border-primary hover:bg-gray-50 transition-all cursor-pointer"
+              className="p-3 sm:p-4 border border-gray-200 rounded-lg hover:border-primary hover:bg-gray-50 transition-all cursor-pointer"
             >
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <span
-                      className={`px-2 py-1 rounded text-xs font-medium ${
-                        question.difficulty === 'easy'
-                          ? 'bg-green-100 text-green-700'
-                          : question.difficulty === 'medium'
-                          ? 'bg-blue-100 text-blue-700'
-                          : question.difficulty === 'hard'
-                          ? 'bg-orange-100 text-orange-700'
-                          : 'bg-red-100 text-red-700'
-                      }`}
-                    >
-                      {question.difficulty === 'easy'
-                        ? '简单'
-                        : question.difficulty === 'medium'
-                        ? '中等'
-                        : question.difficulty === 'hard'
-                        ? '困难'
-                        : '专家'}
-                    </span>
-                    <span className="px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-700">
-                      {question.type === 'single_choice'
-                        ? '单选题'
-                        : question.type === 'multiple_choice'
-                        ? '多选题'
-                        : '编程题'}
-                    </span>
-                  </div>
-                  <p className="text-gray-800">{question.content}</p>
-                  <div className="flex items-center space-x-2 mt-2">
-                    {question.tags.slice(0, 3).map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-2 py-1 rounded text-xs bg-gray-50 text-gray-600"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+              <div className="flex flex-wrap items-center gap-1 sm:gap-2 mb-2">
+                <span
+                  className={`px-2 py-0.5 rounded text-xs font-medium ${
+                    question.difficulty === 'easy'
+                      ? 'bg-green-100 text-green-700'
+                      : question.difficulty === 'medium'
+                      ? 'bg-blue-100 text-blue-700'
+                      : question.difficulty === 'hard'
+                      ? 'bg-orange-100 text-orange-700'
+                      : 'bg-red-100 text-red-700'
+                  }`}
+                >
+                  {question.difficulty === 'easy'
+                    ? '简单'
+                    : question.difficulty === 'medium'
+                    ? '中等'
+                    : question.difficulty === 'hard'
+                    ? '困难'
+                    : '专家'}
+                </span>
+                <span className="px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700">
+                  {question.type === 'single_choice'
+                    ? '单选题'
+                    : question.type === 'multiple_choice'
+                    ? '多选题'
+                    : '编程题'}
+                </span>
+              </div>
+              <p className="text-gray-800 text-sm">{question.content}</p>
+              <div className="flex flex-wrap items-center gap-1 sm:gap-2 mt-2">
+                {question.tags.slice(0, 3).map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-2 py-0.5 rounded text-xs bg-gray-50 text-gray-600"
+                  >
+                    {tag}
+                  </span>
+                ))}
               </div>
             </div>
           ))}

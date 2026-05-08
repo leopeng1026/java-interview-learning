@@ -48,54 +48,54 @@ export default function Mistakes() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start items-start gap-4">
         <div>
-          <h1 className="text-3xl font-serif font-bold text-gray-900">错题本</h1>
-          <p className="text-gray-500 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-gray-900">错题本</h1>
+          <p className="text-gray-500 mt-1 text-sm">
             系统会根据间隔重复算法自动安排复习时间
           </p>
         </div>
         {reviewNowCount > 0 && (
           <Link
             to={`/practice/${mistakes[0]?.questionId}`}
-            className="btn-primary flex items-center space-x-2"
+            className="btn-primary flex items-center space-x-2 text-sm px-4 py-2"
           >
-            <RefreshCw className="w-5 h-5" />
+            <RefreshCw className="w-4 h-4" />
             <span>立即复习 ({reviewNowCount})</span>
           </Link>
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-3 gap-3 sm:gap-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="card p-6"
+          className="card p-4 sm:p-6 text-center"
         >
-          <div className="text-4xl mb-2">📚</div>
-          <div className="text-3xl font-bold text-primary">{mistakes.length}</div>
-          <div className="text-gray-500 text-sm">错题总数</div>
+          <div className="text-3xl sm:text-4xl mb-1 sm:mb-2">📚</div>
+          <div className="text-2xl sm:text-3xl font-bold text-primary">{mistakes.length}</div>
+          <div className="text-gray-500 text-xs sm:text-sm mt-1">错题总数</div>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="card p-6"
+          className="card p-4 sm:p-6 text-center"
         >
-          <div className="text-4xl mb-2">⏰</div>
-          <div className="text-3xl font-bold text-orange-500">{reviewNowCount}</div>
-          <div className="text-gray-500 text-sm">待复习</div>
+          <div className="text-3xl sm:text-4xl mb-1 sm:mb-2">⏰</div>
+          <div className="text-2xl sm:text-3xl font-bold text-orange-500">{reviewNowCount}</div>
+          <div className="text-gray-500 text-xs sm:text-sm mt-1">待复习</div>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="card p-6"
+          className="card p-4 sm:p-6 text-center"
         >
-          <div className="text-4xl mb-2">📈</div>
-          <div className="text-3xl font-bold text-green-500">
+          <div className="text-3xl sm:text-4xl mb-1 sm:mb-2">📈</div>
+          <div className="text-2xl sm:text-3xl font-bold text-green-500">
             {mistakes.length > 0
               ? Math.round(
                   mistakes.reduce((sum, m) => sum + m.mastery, 0) / mistakes.length
@@ -103,7 +103,7 @@ export default function Mistakes() {
               : 0}
             %
           </div>
-          <div className="text-gray-500 text-sm">平均掌握度</div>
+          <div className="text-gray-500 text-xs sm:text-sm mt-1">平均掌握度</div>
         </motion.div>
       </div>
 
@@ -141,22 +141,22 @@ export default function Mistakes() {
               return (
                 <div
                   key={mistake.questionId}
-                  className={`p-4 rounded-lg border-l-4 ${
+                  className={`p-3 sm:p-4 rounded-lg border-l-4 ${
                     needsReview
                       ? 'border-orange-500 bg-orange-50'
                       : 'border-gray-300 bg-gray-50'
                   }`}
                 >
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-2">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-1 sm:gap-2 mb-2">
                         {needsReview && (
-                          <span className="px-2 py-1 rounded text-xs font-medium bg-orange-500 text-white">
+                          <span className="px-2 py-0.5 rounded text-xs font-medium bg-orange-500 text-white">
                             待复习
                           </span>
                         )}
                         <span
-                          className={`px-2 py-1 rounded text-xs font-medium ${
+                          className={`px-2 py-0.5 rounded text-xs font-medium ${
                             question.difficulty === 'easy'
                               ? 'bg-green-100 text-green-700'
                               : question.difficulty === 'medium'
@@ -171,28 +171,27 @@ export default function Mistakes() {
                             : '困难'}
                         </span>
                       </div>
-                      <p className="text-gray-800 mb-2">{question.content}</p>
-                      <div className="flex items-center space-x-4 text-sm text-gray-500">
+                      <p className="text-gray-800 text-sm mb-2 line-clamp-2">{question.content}</p>
+                      <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-500">
                         <span className="flex items-center space-x-1">
-                          <Clock className="w-4 h-4" />
+                          <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
                           <span>
-                            下次复习：
                             {new Date(mistake.nextReviewTime).toLocaleDateString()}
                           </span>
                         </span>
-                        <span>错误次数：{mistake.wrongCount || 1}</span>
+                        <span>错误{mistake.wrongCount || 1}次</span>
                       </div>
                     </div>
-                    <div className="flex flex-col items-end space-y-2">
+                    <div className="flex flex-col items-end space-y-2 shrink-0">
                       <div className="text-right">
-                        <div className="text-lg font-bold text-primary">
+                        <div className="text-base sm:text-lg font-bold text-primary">
                           {Math.round(mistake.mastery)}%
                         </div>
                         <div className="text-xs text-gray-500">掌握度</div>
                       </div>
                       <Link
                         to={`/practice/${question.knowledgePointId}`}
-                        className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-light transition-colors text-sm"
+                        className="px-3 py-1.5 bg-primary text-white rounded-lg hover:bg-primary-light transition-colors text-xs sm:text-sm"
                       >
                         再练一次
                       </Link>

@@ -44,6 +44,32 @@ export default function Practice() {
     );
   }
 
+  if (session.questions.length === 0) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="card p-6 sm:p-8 text-center"
+        >
+          <div className="text-5xl sm:text-6xl mb-4">📚</div>
+          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-gray-900 mb-2">
+            暂无题目
+          </h1>
+          <p className="text-gray-600 mb-6 text-sm sm:text-base">
+            该知识点目前暂无练习题目，敬请期待更新
+          </p>
+          <button
+            onClick={() => navigate(`/knowledge/${pointId}`)}
+            className="btn-primary w-full sm:w-auto"
+          >
+            返回知识点
+          </button>
+        </motion.div>
+      </div>
+    );
+  }
+
   if (session.isCompleted) {
     const correctCount = session.history?.filter(h => h.isCorrect).length || 0;
     const accuracy = Math.round((correctCount / session.questions.length) * 100);
